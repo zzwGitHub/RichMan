@@ -10,9 +10,13 @@
 	
 	<context:annotation-config/>
 	<!-- redis单机版 -->
+	<bean id="poolConfig" class="org.apache.commons.pool2.impl.GenericObjectPoolConfig"/>
 	<bean id="jedisPool" class="redis.clients.jedis.JedisPool">
+		<constructor-arg name="poolConfig" ref="poolConfig" />	
 		<constructor-arg name="host" value="192.144.131.209"/>	
-		<constructor-arg name="port" value="6379"/>	
+		<constructor-arg name="port" value="6380"/>	
+		<constructor-arg name="timeout" value="2000"/>	
+		<constructor-arg name="password" value="red/553231"/>	
 	</bean>
 	<bean id="jedisClientPool" class="top.ziweb.redis.JedisClientPool"/>
 	<!-- redis集群 -->

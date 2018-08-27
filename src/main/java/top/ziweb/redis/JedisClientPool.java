@@ -15,6 +15,7 @@ public class JedisClientPool implements JedisClient {
 
 	public String set(String key, String value) {
 		Jedis jedis = jedisPool.getResource();
+		// jedis.auth("");
 		String result = jedis.set(key, value);
 		jedis.close();
 		return result;

@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import top.ziweb.redis.JedisClient;
@@ -45,7 +47,7 @@ public class WXManageController {
 			request.getSession().setAttribute("session_key", jobj.get("session_key").toString());
 			res.put("openid", jobj.get("openid").toString());
 		}
-		return jobj.toJSONString();
+		return res.toJSONString();
 	}
 	
 	/**
@@ -67,7 +69,7 @@ public class WXManageController {
 		//必须之前wx.login过，才能进行解密操作
 		if(request.getSession().getAttribute("session_key") != null){
 			String key = request.getSession().getAttribute("session_key").toString();
-			res = WXOperation.wxDecryption(encryptedData, iv,key);
+			res = WXOperation.wxDecryption(encryptedData, iv, key);
 			request.getSession().setAttribute("openGId", res.get("openGId").toString());
 			
 			String openid = request.getSession().getAttribute("openid").toString();
@@ -75,7 +77,7 @@ public class WXManageController {
 			
 			playListPush(request);
 		}
-		logger.warn("Controller  wxDecryption=====" + res.toJSONString());
+//		logger.warn("Controller  wxDecryption=====" + res.toJSONString());
 		return res;//{"watermark":{"appid":"wxe2e04de9f9bc7eb2","timestamp":1534994509},"openGId":"GsjyK5VQULwWBgNh_5xw-xf7byuc"}
 	}
 	
@@ -92,10 +94,21 @@ public class WXManageController {
 		
 		Set<String> playOpenids = jedisClientPool.hkeys(openGId);
 		
-		for (String str : playOpenids) {  
-		      System.out.println(str);  
+		JSONArray resArr = new JSONArray();//记录本组所有人的信息
+		
+		for (String openid : playOpenids) {  
+			String moenyOfThis = jedisClientPool.hget(openGId, openid);
+			JSONObject one = new JSONObject();
+			one.put("openid", openid);
+			one.put("money", moenyOfThis);
+			resArr.add(one);
+		}
+		
+		logger.warn("OE)@#K" + resArr.toJSONString());
+		for (String openid : playOpenids) {  
+		      System.out.println(openid);  
 		      try {
-				WXSocket.sendMessage(str, playOpenids.toString());
+				WXSocket.sendMessage(openid, resArr.toJSONString());
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
