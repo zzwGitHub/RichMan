@@ -71,7 +71,7 @@ public class WXOperation {
 	 */
 	public static JSONObject wxDecryption(String encryptedData, String iv, String WXSessionKey){
 		JSONObject res = getClearText(encryptedData, WXSessionKey, iv);
-		logger.warn(res.toJSONString());
+		//logger.warn(res.toJSONString());
 		return res;//{"watermark":{"appid":"wxe2e04de9f9bc7eb2","timestamp":1534994509},"openGId":"GsjyK5VQULwWBgNh_5xw-xf7byuc"}
 	
 	}

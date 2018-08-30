@@ -1,5 +1,7 @@
 package top.ziweb.controller;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -9,8 +11,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.alibaba.fastjson.JSONObject;
+
 import top.ziweb.redis.JedisClient;
 import top.ziweb.redis.JedisClientPool;
+import top.ziweb.websocket.WXSocket;
 
 @Controller
 @RequestMapping(value = "/test")
@@ -48,7 +53,27 @@ public class TestController {
 	@RequestMapping(value = "redis")
 	public String redis(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		jedisClientPool.set("lll", "sdfsf");
-		
+		jedisClientPool.hset("ff", "a:32", "sf");
 		return "redis success!";
 	}
+	
+	@ResponseBody
+	@RequestMapping(value = "ss")
+	public String ss(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		JSONObject res = new JSONObject();
+		res.put("fun", "showAllPlayers");
+		res.put("data", "re");
+		
+		try {
+			WXSocket.sendMessage("oil6A4qYsNpMJ5J1wlYtUgOyMQQg", res.toJSONString());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return "redis success!";
+	}
+	
+	
+	
 }

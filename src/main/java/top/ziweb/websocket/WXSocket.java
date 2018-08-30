@@ -140,7 +140,7 @@ public class WXSocket {
     	}
     }
     
-  //重构定向发送信息————根据openid推送！！ (似乎思路有问题)
+  //重构定向发送信息————根据openid推送！！
     public static void sendMessage(String openid,String message) throws IOException {
     	try {
     		Session mySession = openidSession.get(openid);
