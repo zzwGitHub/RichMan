@@ -60,7 +60,7 @@ public class WXOperation {
 		}
 		JSONObject jobj = JSONObject.parseObject(res);
 		
-		logger.warn(jobj.toJSONString());
+//		logger.warn(jobj.toJSONString());
 		return jobj;
 	}
 	

@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.alibaba.fastjson.JSONObject;
 
 import top.ziweb.redis.JedisClient;
-import top.ziweb.redis.JedisClientPool;
 import top.ziweb.websocket.WXSocket;
 
 @Controller
@@ -43,9 +41,9 @@ public class TestController {
 			testmsg = testmsg + "a";
 		}
 		sesssion.setAttribute("msg", testmsg);*/
-		System.out.println("openid-------" + request.getSession().getAttribute("openid"));
+//		System.out.println("openid-------" + request.getSession().getAttribute("openid"));
 		String res = request.getSession().getAttribute("openid").toString();
-		System.out.println(res);
+//		System.out.println(res);
 		return res;
 	}
 	

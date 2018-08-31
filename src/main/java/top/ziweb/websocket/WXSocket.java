@@ -46,7 +46,6 @@ public class WXSocket {
      */
     @OnOpen
     public void onOpen(@PathParam("useropenid") String useropenid,Session session){
-    	System.out.println(useropenid);
         this.session = session;
         webSocketSet.add(this);     //加入set中
         webSocketMap.put(session,this); //加入map中

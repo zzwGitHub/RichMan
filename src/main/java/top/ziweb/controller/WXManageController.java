@@ -41,6 +41,7 @@ public class WXManageController {
 	@ResponseBody
 	@RequestMapping(value = "wxCheckLogin")
 	public String wxCheckLogin(String code, HttpServletRequest request, HttpServletResponse response) throws Exception {
+		logger.warn("wxCheckLogin进入");
 		String sessionid = request.getSession().getId();
 		JSONObject jobj = WXOperation.checkLogin(code);
 		JSONObject res = new JSONObject();
@@ -50,9 +51,9 @@ public class WXManageController {
 			request.getSession().setAttribute("openid", jobj.get("openid").toString());
 			request.getSession().setAttribute("session_key", jobj.get("session_key").toString());
 			res.put("openid", jobj.get("openid").toString());
-			
-			
-			logger.warn("wxCheckLogin的key=====" +jobj.get("session_key").toString() );
+
+			logger.warn("wxCheckLogin解析并存入session的session_key=====" +jobj.get("session_key").toString() 
+					+ "00000000000session_key=======" + jobj.get("openid").toString());
 		}
 		return res.toJSONString();
 	}
@@ -74,6 +75,10 @@ public class WXManageController {
 		
 		request.getSession().setAttribute("nickName", nickName);
 		request.getSession().setAttribute("avatarUrl", avatarUrl);
+		
+		logger.warn("recordWXUserInfo 中 的nickName=====" + nickName 
+				+ "00000000000avatarUrl=======" + avatarUrl);
+		
 		return res;
 
 	
@@ -154,6 +159,8 @@ public class WXManageController {
 			//而且这说明此事是第一位玩家登陆进去
 			//就让这个人兼理“bank”吧！
 			jedisClientPool.hset(openGid, "bankOpenid", openId);
+			
+			jedisClientPool.expire(openGid, 1 * 60 * 60 * 24); //每次游戏数据在1天内删除
 			
 		}else{  //有的话，就向其中加入新数据
 			
@@ -254,6 +261,9 @@ public class WXManageController {
 		String money = (request.getParameter("money")==null?"":request.getParameter("money")).toString();
 		String human = (request.getParameter("human")==null?"":request.getParameter("human")).toString();
 	
+		if("".equals(money))  //数据不对别墨迹，直接结束掉
+			return;
+		
 		String openGId = request.getSession().getAttribute("openGId").toString();
 		if("".equals(human)){
 			//给所有人金额变动
@@ -266,7 +276,6 @@ public class WXManageController {
 			//给指定人
 			jedisClientPool.hset(openGId, human + ":money", money);
 		}
-	
 		playListPush(request); //最后要推送一下哦~
 		pushPlayersMoney(request);
 	}
@@ -280,7 +289,29 @@ public class WXManageController {
 	@RequestMapping("/playerSetMoney")
 	@ResponseBody
 	public void playerSetMoney(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		String money = (request.getParameter("money")==null?"":request.getParameter("money")).toString();
+		String getMoneyPeople = (request.getParameter("human")==null?"":request.getParameter("human")).toString();
 		
+		if("".equals(money) || "".equals(getMoneyPeople))  //数据不对别墨迹，直接结束掉
+			return;
+		
+		String openGId = request.getSession().getAttribute("openGId").toString();
+		String sendMoneyPeople = request.getSession().getAttribute("openid").toString();
+		
+		int moneyInt = Integer.parseInt(money);
+		
+		String myMoney = jedisClientPool.hget(openGId, sendMoneyPeople + ":money");
+		int myMoneyInt = Integer.parseInt(myMoney);
+		
+		String herMoney = jedisClientPool.hget(openGId, getMoneyPeople + ":money");
+		int herMoneyInt = Integer.parseInt(herMoney);
+		
+		jedisClientPool.hset(openGId, sendMoneyPeople + ":money", (myMoneyInt-moneyInt) + "");
+		jedisClientPool.hset(openGId, getMoneyPeople + ":money", (herMoneyInt+moneyInt) + "");
+		
+		playListPush(request); //最后要推送一下哦~
+		pushPlayersMoney(request);
+
 		
 	}
 	
