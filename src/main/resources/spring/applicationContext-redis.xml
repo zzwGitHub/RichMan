@@ -16,7 +16,7 @@
 		<constructor-arg name="host" value="192.144.131.209"/>	
 		<constructor-arg name="port" value="6380"/>	
 		<constructor-arg name="timeout" value="2000"/>	
-		<constructor-arg name="password" value="red/553231"/>	
+		<constructor-arg name="password" value=""/>	
 	</bean>
 	<bean id="jedisClientPool" class="top.ziweb.redis.JedisClientPool"/>
 	<!-- redis集群 -->
