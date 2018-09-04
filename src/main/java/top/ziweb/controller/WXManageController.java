@@ -282,7 +282,8 @@ public class WXManageController {
 	
 	/**
 	 * 玩家页面的金额变动
-	 *
+	 * 如果玩家是选择向银行赚钱，则传来的值是bank
+	 * 
 	 * @author Ziw
 	 * @date 2018年8月28日
 	 */
@@ -302,12 +303,15 @@ public class WXManageController {
 		
 		String myMoney = jedisClientPool.hget(openGId, sendMoneyPeople + ":money");
 		int myMoneyInt = Integer.parseInt(myMoney);
-		
-		String herMoney = jedisClientPool.hget(openGId, getMoneyPeople + ":money");
-		int herMoneyInt = Integer.parseInt(herMoney);
-		
 		jedisClientPool.hset(openGId, sendMoneyPeople + ":money", (myMoneyInt-moneyInt) + "");
-		jedisClientPool.hset(openGId, getMoneyPeople + ":money", (herMoneyInt+moneyInt) + "");
+ 
+		//不是向银行打钱时的操作
+		if(!"bank".equals(getMoneyPeople)){ 
+			String herMoney = jedisClientPool.hget(openGId, getMoneyPeople + ":money");
+			int herMoneyInt = Integer.parseInt(herMoney);
+			jedisClientPool.hset(openGId, getMoneyPeople + ":money", (herMoneyInt+moneyInt) + "");
+			
+		}
 		
 		playListPush(request); //最后要推送一下哦~
 		pushPlayersMoney(request);
