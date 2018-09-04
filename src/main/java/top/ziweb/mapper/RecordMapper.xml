@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="top.ziweb.mapper.RecordMapper" >
+  <resultMap id="BaseResultMap" type="top.ziweb.pojo.Record" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="operation_time" property="operationTime" jdbcType="VARCHAR" />
+    <result column="openid" property="openid" jdbcType="VARCHAR" />
+    <result column="groupid" property="groupid" jdbcType="VARCHAR" />
+    <result column="nickname" property="nickname" jdbcType="VARCHAR" />
+    <result column="purpose_openid" property="purposeOpenid" jdbcType="VARCHAR" />
+    <result column="purpose_nickname" property="purposeNickname" jdbcType="VARCHAR" />
+    <result column="money" property="money" jdbcType="VARCHAR" />
+    <result column="detail" property="detail" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, operation_time, openid, groupid, nickname, purpose_openid, purpose_nickname, 
+    money, detail
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="top.ziweb.pojo.RecordExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from record
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from record
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from record
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteByExample" parameterType="top.ziweb.pojo.RecordExample" >
+    delete from record
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="top.ziweb.pojo.Record" >
+    insert into record (id, operation_time, openid, 
+      groupid, nickname, purpose_openid, 
+      purpose_nickname, money, detail
+      )
+    values (#{id,jdbcType=INTEGER}, #{operationTime,jdbcType=VARCHAR}, #{openid,jdbcType=VARCHAR}, 
+      #{groupid,jdbcType=VARCHAR}, #{nickname,jdbcType=VARCHAR}, #{purposeOpenid,jdbcType=VARCHAR}, 
+      #{purposeNickname,jdbcType=VARCHAR}, #{money,jdbcType=VARCHAR}, #{detail,jdbcType=VARCHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="top.ziweb.pojo.Record" >
+    insert into record
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="operationTime != null" >
+        operation_time,
+      </if>
+      <if test="openid != null" >
+        openid,
+      </if>
+      <if test="groupid != null" >
+        groupid,
+      </if>
+      <if test="nickname != null" >
+        nickname,
+      </if>
+      <if test="purposeOpenid != null" >
+        purpose_openid,
+      </if>
+      <if test="purposeNickname != null" >
+        purpose_nickname,
+      </if>
+      <if test="money != null" >
+        money,
+      </if>
+      <if test="detail != null" >
+        detail,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="operationTime != null" >
+        #{operationTime,jdbcType=VARCHAR},
+      </if>
+      <if test="openid != null" >
+        #{openid,jdbcType=VARCHAR},
+      </if>
+      <if test="groupid != null" >
+        #{groupid,jdbcType=VARCHAR},
+      </if>
+      <if test="nickname != null" >
+        #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="purposeOpenid != null" >
+        #{purposeOpenid,jdbcType=VARCHAR},
+      </if>
+      <if test="purposeNickname != null" >
+        #{purposeNickname,jdbcType=VARCHAR},
+      </if>
+      <if test="money != null" >
+        #{money,jdbcType=VARCHAR},
+      </if>
+      <if test="detail != null" >
+        #{detail,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="top.ziweb.pojo.RecordExample" resultType="java.lang.Integer" >
+    select count(*) from record
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update record
+    <set >
+      <if test="record.id != null" >
+        id = #{record.id,jdbcType=INTEGER},
+      </if>
+      <if test="record.operationTime != null" >
+        operation_time = #{record.operationTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.openid != null" >
+        openid = #{record.openid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.groupid != null" >
+        groupid = #{record.groupid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.nickname != null" >
+        nickname = #{record.nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.purposeOpenid != null" >
+        purpose_openid = #{record.purposeOpenid,jdbcType=VARCHAR},
+      </if>
+      <if test="record.purposeNickname != null" >
+        purpose_nickname = #{record.purposeNickname,jdbcType=VARCHAR},
+      </if>
+      <if test="record.money != null" >
+        money = #{record.money,jdbcType=VARCHAR},
+      </if>
+      <if test="record.detail != null" >
+        detail = #{record.detail,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update record
+    set id = #{record.id,jdbcType=INTEGER},
+      operation_time = #{record.operationTime,jdbcType=VARCHAR},
+      openid = #{record.openid,jdbcType=VARCHAR},
+      groupid = #{record.groupid,jdbcType=VARCHAR},
+      nickname = #{record.nickname,jdbcType=VARCHAR},
+      purpose_openid = #{record.purposeOpenid,jdbcType=VARCHAR},
+      purpose_nickname = #{record.purposeNickname,jdbcType=VARCHAR},
+      money = #{record.money,jdbcType=VARCHAR},
+      detail = #{record.detail,jdbcType=VARCHAR}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="top.ziweb.pojo.Record" >
+    update record
+    <set >
+      <if test="operationTime != null" >
+        operation_time = #{operationTime,jdbcType=VARCHAR},
+      </if>
+      <if test="openid != null" >
+        openid = #{openid,jdbcType=VARCHAR},
+      </if>
+      <if test="groupid != null" >
+        groupid = #{groupid,jdbcType=VARCHAR},
+      </if>
+      <if test="nickname != null" >
+        nickname = #{nickname,jdbcType=VARCHAR},
+      </if>
+      <if test="purposeOpenid != null" >
+        purpose_openid = #{purposeOpenid,jdbcType=VARCHAR},
+      </if>
+      <if test="purposeNickname != null" >
+        purpose_nickname = #{purposeNickname,jdbcType=VARCHAR},
+      </if>
+      <if test="money != null" >
+        money = #{money,jdbcType=VARCHAR},
+      </if>
+      <if test="detail != null" >
+        detail = #{detail,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="top.ziweb.pojo.Record" >
+    update record
+    set operation_time = #{operationTime,jdbcType=VARCHAR},
+      openid = #{openid,jdbcType=VARCHAR},
+      groupid = #{groupid,jdbcType=VARCHAR},
+      nickname = #{nickname,jdbcType=VARCHAR},
+      purpose_openid = #{purposeOpenid,jdbcType=VARCHAR},
+      purpose_nickname = #{purposeNickname,jdbcType=VARCHAR},
+      money = #{money,jdbcType=VARCHAR},
+      detail = #{detail,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
