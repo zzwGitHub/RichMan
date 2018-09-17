@@ -1,11 +1,13 @@
 package top.ziweb.controller;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,6 +21,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.baidu.aip.speech.AipSpeech;
+import com.baidu.aip.speech.TtsResponse;
+import com.baidu.aip.util.Util;
 
 import top.ziweb.redis.JedisClient;
 import top.ziweb.util.WXOperation;
@@ -317,6 +322,88 @@ public class WXManageController {
 		pushPlayersMoney(request);
 
 		
+	}
+	
+	
+	
+	public static final String APP_ID = "11797620";
+    public static final String API_KEY = "i0zNOugGq1Od3fR1a5tSEoY1";
+    public static final String SECRET_KEY = "Pk4iFP3bVk4UQueiYgGfCg313wcalzBO";
+
+	@ResponseBody
+	@RequestMapping(value = "CollectMoneyVoice",produces = "application/json; charset=utf-8")  
+	public String CollectMoneyVoice(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		String receiveMoney = request.getParameter("receiveMoney");
+		if(receiveMoney == null || "".equals(receiveMoney)){
+			return "";
+		}
+		
+		// 初始化一个AipSpeech
+        AipSpeech client = new AipSpeech(APP_ID, API_KEY, SECRET_KEY);
+
+        // 可选：设置网络连接参数
+        client.setConnectionTimeoutInMillis(2000);
+        //client.setSocketTimeoutInMillis(60000);
+
+        // 可选：设置代理服务器地址, http和socket二选一，或者均不设置
+        //client.setHttpProxy("proxy_host", proxy_port);  // 设置http代理
+        //client.setSocketProxy("proxy_host", proxy_port);  // 设置socket代理
+
+        // 可选：设置log4j日志输出格式，若不设置，则使用默认配置
+        // 也可以直接通过jvm启动参数设置此环境变量
+        //System.setProperty("aip.log4j.conf", "path/to/your/log4j.properties");
+
+        // 调用接口
+        TtsResponse res = client.synthesis("收款" + receiveMoney + "元。", "zh", 1, null);
+        byte[] data = res.getData();
+        org.json.JSONObject res1 = res.getResult();
+        
+        String path2 = request.getSession().getServletContext().getRealPath("/");
+        System.out.println(path2);
+        String voiceName = UUID.randomUUID().toString().replace("-", "").toUpperCase();
+        if (data != null) {
+            try {
+                Util.writeBytesToFileSystem(data, path2 + "voice/"+voiceName+".mp3");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (res1 != null) {
+            System.out.println(res1.toString(2));
+        }
+        
+		return voiceName;
+	}
+	
+	
+	@ResponseBody
+	@RequestMapping(value = "deleteVoice",produces = "application/json; charset=utf-8")  
+	public void deleteVoice(HttpServletRequest request, HttpServletResponse response) throws Exception {
+		
+		String Mp3Name = request.getParameter("Mp3Name");
+		if(Mp3Name == null || "".equals(Mp3Name)){
+			return;
+		}
+		
+		String path = request.getSession().getServletContext().getRealPath("/");
+        System.out.println(path);
+		
+        path = path + "voice/"+Mp3Name+".mp3";
+        
+        
+        File file = new File(path);
+        // 如果文件路径所对应的文件存在，并且是一个文件，则直接删除
+        if (file.exists() && file.isFile()) {
+            if (file.delete()) {
+                System.out.println("删除单个文件" + path + "成功！");
+            } else {
+                System.out.println("删除单个文件" + path + "失败！");
+            }
+        } else {
+            System.out.println("删除单个文件失败：" + path + "不存在！");
+        }
+	
 	}
 	
 }
